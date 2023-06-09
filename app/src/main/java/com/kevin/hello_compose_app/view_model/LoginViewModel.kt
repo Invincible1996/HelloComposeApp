@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.kevin.hello_compose_app.net.app.appService
 import com.kevin.hello_compose_app.net.app.bean.LoginReq
 import com.kevin.hello_compose_app.utils.MD5Utils
+import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -19,10 +20,7 @@ class LoginViewModel : ViewModel() {
         password: String,
         onLoginResult: (isSuccess: Boolean, token: String) -> Unit
     ) {
-
         val encryptedPassword = MD5Utils.encrypt(password)
-
-
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 // 登录
@@ -36,7 +34,8 @@ class LoginViewModel : ViewModel() {
 
                         //保存token到本地
                         // Get the SharedPreferences object.
-
+                        val mkv: MMKV = MMKV.defaultMMKV()
+                        mkv.encode("token", loginResponse?.data?.token)
 
                         onLoginResult(true, loginResponse?.data?.token!!)
                         _isLoggedIn.value = true

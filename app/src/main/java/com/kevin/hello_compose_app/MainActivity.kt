@@ -1,10 +1,13 @@
 package com.kevin.hello_compose_app
 
+import android.content.Context
 import android.os.Bundle
-import android.preference.PreferenceManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,12 +26,14 @@ class MainActivity : ComponentActivity() {
 
     private val loginViewModel: LoginViewModel by viewModels()
 
+    // At the top level of your kotlin file:
+    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             val navController = rememberNavController()
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
             val context = this
 
@@ -45,12 +50,7 @@ class MainActivity : ComponentActivity() {
                 composable("login") {
                     LoginScreen(
                         loginViewModel = loginViewModel,
-                        onLoginSuccess = { isSuccess, token ->
-
-                            // Save the token to the SharedPreferences object.
-                            val editor = sharedPreferences.edit()
-                            editor.putString("token", token)
-                            editor.apply()
+                        onLoginSuccess = { _, _ ->
                             navigateToHome(navController)
                         })
                 }
@@ -64,11 +64,12 @@ class MainActivity : ComponentActivity() {
                     FavoriteScreen()
                 }
                 composable("settings") {
-                    SettingScreen(navController,context)
+                    SettingScreen(navController, context)
                 }
             }
         }
     }
+
 
     private fun navigateToHome(navController: NavController) {
         navController.navigate("home") {
@@ -79,3 +80,4 @@ class MainActivity : ComponentActivity() {
     }
 
 }
+

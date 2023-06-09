@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.kevin.hello_compose_app.components.CustomTopAppBar
+import com.tencent.mmkv.MMKV
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -128,12 +129,8 @@ fun SettingScreen(navController: NavController, context: Context) {
             confirmButton = {
                 Button(
                     onClick = {
-                        // Perform logout
-
-                        val editor = sharedPreferences.edit()
-                        editor.remove("token")
-                        editor.apply()
-
+                        val mkv: MMKV = MMKV.defaultMMKV()
+                        mkv.removeValueForKey("token")
 
                         showDialog.value = false
                         navController.navigate("login") {
