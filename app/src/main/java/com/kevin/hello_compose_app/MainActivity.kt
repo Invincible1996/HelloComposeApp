@@ -30,6 +30,8 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
+            val context = this
+
             NavHost(navController = navController, startDestination = "splash") {
                 composable("drawer") {
                     ModalNavigationDrawerSample()
@@ -62,7 +64,7 @@ class MainActivity : ComponentActivity() {
                     FavoriteScreen()
                 }
                 composable("settings") {
-                    SettingScreen()
+                    SettingScreen(navController,context)
                 }
             }
         }
